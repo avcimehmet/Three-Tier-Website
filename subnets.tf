@@ -1,6 +1,6 @@
 locals {
   subnet_count       = 2
-  availability_zones = ["us-east-1a", "us-east-1b"]
+  availability_zones = ["us-east-1a", "us-east-1b", "us-east-1c", "us-east-1d"]
 }
 
 resource "aws_subnet" "Website-deployment-public" {

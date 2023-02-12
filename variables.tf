@@ -13,14 +13,20 @@ variable "infrastructure_version" {
   default = "1"
 }
 
-variable "enable_blue_env" {
-  description = "Enable blue environment"
-  type        = bool
-  default     = true
+variable "Subnet_count" {
+  description = "Number of subnets in infrastructure"
+  type        = number
+  default     = 2
 }
 
-variable "blue_instance_count" {
-  description = "Number of instances in blue environment"
+variable "Instance_count_per_subnet" {
+  description = "Number of subnets in infrastructure"
+  type        = number
+  default     = 1
+}
+
+variable "Web_instance_count" {
+  description = "Number of instances in infrastructure"
   type        = number
   default     = 2
 }
@@ -31,19 +37,8 @@ variable "instance_type" {
   default     = "t2.micro"
 }
 
-variable "enable_green_env" {
-  description = "Enable green environment"
-  type        = bool
-  default     = false
-}
-
-variable "green_instance_count" {
+variable "App_instance_count" {
   description = "Number of instances in green environment"
   type        = number
   default     = 2
 }
-
-#variable "traffic_distribution" {
-#  description = "Levels of traffic distribution"
-#  type        = string
-#}

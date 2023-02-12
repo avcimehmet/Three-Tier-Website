@@ -35,6 +35,15 @@ resource "aws_security_group_rule" "Website-deployment-AppServer-inbound-https" 
   source_security_group_id = "${aws_security_group.Website-deployment-WebServer.id}"
 }
 
+resource "aws_security_group_rule" "Website-deployment-AppServer-inbound-allICMP" {
+  type              = "ingress"
+  from_port         = -1
+  to_port           = -1
+  protocol          = "icmp"
+  security_group_id = aws_security_group.Website-deployment-AppServer.id
+  source_security_group_id = "${aws_security_group.Website-deployment-WebServer.id}"
+}
+
 resource "aws_security_group_rule" "Website-deployment-AppServer-outbound" {
   type              = "egress"
   from_port         = 0

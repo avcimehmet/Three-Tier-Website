@@ -13,6 +13,6 @@ resource "aws_route_table" "Website-deployment-main" {
 
 resource "aws_route_table_association" "Website-deployment-main" {
   count          = 2
-  subnet_id      = element(local.subnets, count.index)
+  subnet_id      = element(local.subnets_public, count.index)
   route_table_id = aws_route_table.Website-deployment-main.id
 }
