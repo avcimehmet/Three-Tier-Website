@@ -5,6 +5,7 @@ resource "aws_instance" "App_Server" {
   subnet_id              = element(local.subnets_private, count.index)
   vpc_security_group_ids = [aws_security_group.Website-deployment-AppServer.id]
   key_name = "mykey"
+  depends_on = [aws_nat_gateway.NATgw]
 
   user_data = templatefile("./userdata-AppServer.sh", {
     file_content = "App Server version 1.2 - ${count.index}"
