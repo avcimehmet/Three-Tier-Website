@@ -1,5 +1,5 @@
 resource "aws_instance" "Web_Server" {
-  count                  = var.Subnet_count * var.Instance_count_per_subnet
+  count                  = "${local.total_instance_count}"
   ami                    = data.aws_ami.amzlinux.id
   instance_type          = var.instance_type
   subnet_id              = element(local.subnets_public, count.index)

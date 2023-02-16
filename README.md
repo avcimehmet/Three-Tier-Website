@@ -9,3 +9,7 @@ Problems to be Solved:
 Deficiencies Detected and Applied Solution:
 1.  Route Table created for NATgw
 2.  Route Table Association (to private subnets) created for NATgw
+
+#ALB & ASG created.
+Problems to be Solved:
+1.  LB target group registration could not be completed due to a bad "arn".
