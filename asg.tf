@@ -5,7 +5,7 @@ resource "aws_launch_configuration" "lc_asg_web" {
   instance_type   = "t2.micro"
   key_name        = "mykey"
 
-  user_data = "${file("./userdata-WebServer.sh")}"
+  user_data = file("./userdata-WebServer.sh")
 
   lifecycle {
     create_before_destroy = true
@@ -46,4 +46,22 @@ resource "aws_autoscaling_policy" "asp_web_inst" {
 resource "aws_autoscaling_attachment" "asa_asg_web" {
   autoscaling_group_name = aws_autoscaling_group.asg_web_inst.id
   lb_target_group_arn    = aws_lb_target_group.Lb_target_group.arn
+}
+
+resource "aws_cloudwatch_metric_alarm" "asg_cw_web_inst" {
+  alarm_name          = "scaling instances"
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  evaluation_periods  = "2"
+  metric_name         = "CPUUtilization"
+  namespace           = "AWS/EC2"
+  period              = "60"
+  statistic           = "Maximum"
+  threshold           = "60"
+
+  dimensions = {
+    AutoScalingGroupName = aws_autoscaling_group.asg_web_inst.name
+  }
+
+  alarm_description = "This metric monitors ec2 cpu utilization"
+  alarm_actions     = [aws_autoscaling_policy.asp_web_inst.arn]
 }
