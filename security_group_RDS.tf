@@ -9,10 +9,10 @@ resource "aws_security_group" "Website-deployment-RDS" {
 }
 
 resource "aws_security_group_rule" "Website-deployment-RDS-inbound-mysql" {
-  type              = "ingress"
-  from_port         = 3306
-  to_port           = 3306
-  protocol          = "tcp"
-  security_group_id = aws_security_group.Website-deployment-RDS.id
-  source_security_group_id = "${aws_security_group.Website-deployment-AppServer.id}"
+  type                     = "ingress"
+  from_port                = 3306
+  to_port                  = 3306
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.Website-deployment-RDS.id
+  source_security_group_id = aws_security_group.Website-deployment-AppServer.id
 }

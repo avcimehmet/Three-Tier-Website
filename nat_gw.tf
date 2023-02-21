@@ -1,6 +1,6 @@
 resource "aws_nat_gateway" "NATgw" {
   allocation_id = aws_eip.elasticIP.id
-  subnet_id     =  element(local.subnets_public, 0)
+  subnet_id     = element(local.subnets_public, 0)
 
   tags = {
     Name = "NAT gw"
@@ -12,7 +12,7 @@ resource "aws_nat_gateway" "NATgw" {
 }
 
 resource "aws_eip" "elasticIP" {
-  vpc      = true
+  vpc = true
   tags = {
     Name = "NAT gw EIP"
   }

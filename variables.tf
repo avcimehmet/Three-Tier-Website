@@ -4,6 +4,12 @@ variable "aws_region" {
   default     = "us-east-1"
 }
 
+variable "availability_zones" {
+  description = "List of desired availability zones"
+  type        = list(string)
+  default     = ["us-east-1a", "us-east-1b", "us-east-1c", "us-east-1d"]
+}
+
 variable "profile" {
   description = "AWS Credentials Profile configured on your local desktop terminal  $HOME/.aws/credentials"
   default     = "default"

@@ -1,65 +1,49 @@
-resource "aws_launch_configuration" "asg_web" {
-  count         = "${local.total_instance_count}"
-  name_prefix   = "lc-Three-Tier"
-  image_id      = data.aws_ami.amzlinux.id
-  instance_type = "t2.micro"
+resource "aws_launch_configuration" "lc_asg_web" {
+  name_prefix     = "lc-Three-Tier"
+  image_id        = data.aws_ami.amzlinux.id
+  security_groups = ["${aws_security_group.Website-deployment-WebServer.id}"]
+  instance_type   = "t2.micro"
+  key_name        = "mykey"
 
-  user_data = templatefile("./userdata-WebServer.sh", {
-    file_content = "Web Server version 1.2 - ${count.index+"${local.total_instance_count}"}"
-  })
+  user_data = "${file("./userdata-WebServer.sh")}"
 
   lifecycle {
     create_before_destroy = true
-  }
-}
-
-resource "aws_launch_template" "asg_web" {
-  count         = "${local.total_instance_count}"
-  name          = "lt-Three-Tier-web-inst-${count.index}"
-  image_id      = data.aws_ami.amzlinux.id
-  instance_type = "t2.micro"
-  key_name      = "mykey"
-
-
-  network_interfaces {
-    associate_public_ip_address = true
-    security_groups             = [aws_security_group.Website-deployment-WebServer.id]
-    delete_on_termination       = true
-    subnet_id                   = "${aws_subnet.Website-deployment-public["${count.index}"].id}"
-  }
-
-  tag_specifications {
-    resource_type = "instance"
-
-    tags = {
-      Name = "test"
-    }
   }
 }
 
 resource "aws_autoscaling_group" "asg_web_inst" {
-  count                = "${local.total_instance_count}"
-  name                 = "asg-Three-Tier-web-inst-${count.index}"
-  vpc_zone_identifier  = [aws_subnet.Website-deployment-public["${count.index}"].id]
-  force_delete         = true
+  name                 = "asg-Three-Tier-web-inst"
+  vpc_zone_identifier  = local.subnets_public
+  launch_configuration = aws_launch_configuration.lc_asg_web.name
 
-  desired_capacity     = "${local.total_instance_count}"
-  min_size             = ((var.Subnet_count * var.Instance_count_per_subnet)-1)
-  max_size             = var.Subnet_count * var.Instance_count_per_subnet * 2
+  min_size = local.total_instance_count
+  max_size = "${local.total_instance_count}" * 2
 
-  launch_template {
-    id      = aws_launch_template.asg_web[count.index].id
-    version = "$Latest"
-  }
+  health_check_grace_period = 300
+  health_check_type         = "ELB"
+  force_delete              = true
 
   lifecycle {
-    create_before_destroy = true
     ignore_changes = [load_balancers, target_group_arns]
+  }
+
+  tag {
+    key                 = "Name"
+    value               = "web-server"
+    propagate_at_launch = true
   }
 }
 
-resource "aws_autoscaling_attachment" "asg_web" {
-  count                  = "${local.total_instance_count}"
-  autoscaling_group_name = aws_autoscaling_group.asg_web_inst["${count.index}"].id
+resource "aws_autoscaling_policy" "asp_web_inst" {
+  name                   = "asp_web_inst"
+  scaling_adjustment     = local.total_instance_count
+  adjustment_type        = "ChangeInCapacity"
+  cooldown               = 300
+  autoscaling_group_name = aws_autoscaling_group.asg_web_inst.name
+}
+
+resource "aws_autoscaling_attachment" "asa_asg_web" {
+  autoscaling_group_name = aws_autoscaling_group.asg_web_inst.id
   lb_target_group_arn    = aws_lb_target_group.Lb_target_group.arn
 }
