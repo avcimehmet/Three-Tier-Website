@@ -17,8 +17,9 @@ resource "aws_autoscaling_group" "asg_web_inst" {
   vpc_zone_identifier  = local.subnets_public
   launch_configuration = aws_launch_configuration.lc_asg_web.name
 
-  min_size = local.total_instance_count
-  max_size = "${local.total_instance_count}" * 2
+  desired_capacity = local.total_instance_count
+  min_size         = local.total_instance_count
+  max_size         = local.total_instance_count * 2
 
   health_check_grace_period = 300
   health_check_type         = "ELB"
@@ -35,33 +36,67 @@ resource "aws_autoscaling_group" "asg_web_inst" {
   }
 }
 
-resource "aws_autoscaling_policy" "asp_web_inst" {
-  name                   = "asp_web_inst"
-  scaling_adjustment     = local.total_instance_count
-  adjustment_type        = "ChangeInCapacity"
-  cooldown               = 300
-  autoscaling_group_name = aws_autoscaling_group.asg_web_inst.name
-}
-
 resource "aws_autoscaling_attachment" "asa_asg_web" {
   autoscaling_group_name = aws_autoscaling_group.asg_web_inst.id
   lb_target_group_arn    = aws_lb_target_group.Lb_target_group.arn
 }
 
-resource "aws_cloudwatch_metric_alarm" "asg_cw_web_inst" {
-  alarm_name          = "scaling instances"
-  comparison_operator = "GreaterThanOrEqualToThreshold"
+resource "aws_autoscaling_policy" "asp_scale_out_web_inst" {
+  name                   = "asp_scale_out_web_inst"
+  adjustment_type        = "ChangeInCapacity"
+  policy_type            = "StepScaling"
+  autoscaling_group_name = aws_autoscaling_group.asg_web_inst.name
+
+  step_adjustment {
+    scaling_adjustment          = 1
+    metric_interval_lower_bound = 1.0
+  }
+}
+
+resource "aws_autoscaling_policy" "asp_scale_in_web_inst" {
+  name                   = "asp_scale_in_web_inst"
+  adjustment_type        = "ChangeInCapacity"
+  policy_type            = "StepScaling"
+  autoscaling_group_name = aws_autoscaling_group.asg_web_inst.name
+
+  step_adjustment {
+    scaling_adjustment          = -1
+    metric_interval_upper_bound = -1.0
+  }
+}
+
+resource "aws_cloudwatch_metric_alarm" "cw_scale_out_web_inst" {
+  alarm_name          = "scale-out"
+  comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = "2"
   metric_name         = "CPUUtilization"
   namespace           = "AWS/EC2"
   period              = "60"
-  statistic           = "Maximum"
-  threshold           = "60"
+  statistic           = "Average"
+  threshold           = "70"
 
   dimensions = {
     AutoScalingGroupName = aws_autoscaling_group.asg_web_inst.name
   }
 
-  alarm_description = "This metric monitors ec2 cpu utilization"
-  alarm_actions     = [aws_autoscaling_policy.asp_web_inst.arn]
+  alarm_description = "This metric is to scale-out according to ec2 cpu utilization"
+  alarm_actions     = [aws_autoscaling_policy.asp_scale_out_web_inst.arn]
+}
+
+resource "aws_cloudwatch_metric_alarm" "cw_scale_in_web_inst" {
+  alarm_name          = "scale-in"
+  comparison_operator = "LessThanOrEqualToThreshold"
+  evaluation_periods  = "2"
+  metric_name         = "CPUUtilization"
+  namespace           = "AWS/EC2"
+  period              = "60"
+  statistic           = "Average"
+  threshold           = "30"
+
+  dimensions = {
+    AutoScalingGroupName = aws_autoscaling_group.asg_web_inst.name
+  }
+
+  alarm_description = "This metric is to scale-in according to ec2 cpu utilization"
+  alarm_actions     = [aws_autoscaling_policy.asp_scale_in_web_inst.arn]
 }

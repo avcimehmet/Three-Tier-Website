@@ -2,7 +2,7 @@ resource "aws_lb" "LB_Web_App" {
   name                             = "LbWebApp"
   internal                         = false
   load_balancer_type               = "application"
-  security_groups                  = [aws_security_group.Website-deployment-WebServer.id]
+  security_groups                  = [aws_security_group.Website_deployment_LB.id]
   subnets                          = [for subnet in aws_subnet.Website-deployment-public : subnet.id]
   enable_cross_zone_load_balancing = true
   enable_deletion_protection       = false

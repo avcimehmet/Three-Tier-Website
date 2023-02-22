@@ -9,30 +9,30 @@ resource "aws_security_group" "Website-deployment-WebServer" {
 }
 
 resource "aws_security_group_rule" "Website-deployment-WebServer-inbound-http" {
-  type              = "ingress"
-  from_port         = 80
-  to_port           = 80
-  protocol          = "tcp"
-  cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = aws_security_group.Website-deployment-WebServer.id
+  type                      = "ingress"
+  from_port                 = 80
+  to_port                   = 80
+  protocol                  = "tcp"
+  security_group_id         = aws_security_group.Website-deployment-WebServer.id
+  source_security_group_id = aws_security_group.Website_deployment_LB.id
 }
 
 resource "aws_security_group_rule" "Website-deployment-WebServer-inbound-https" {
-  type              = "ingress"
-  from_port         = 443
-  to_port           = 443
-  protocol          = "tcp"
-  cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = aws_security_group.Website-deployment-WebServer.id
+  type                      = "ingress"
+  from_port                 = 443
+  to_port                   = 443
+  protocol                  = "tcp"
+  security_group_id         = aws_security_group.Website-deployment-WebServer.id
+  source_security_group_id = aws_security_group.Website_deployment_LB.id
 }
 
 resource "aws_security_group_rule" "Website-deployment-WebServer-inbound-ssh" {
-  type              = "ingress"
-  from_port         = 22
-  to_port           = 22
-  protocol          = "tcp"
-  cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = aws_security_group.Website-deployment-WebServer.id
+  type                      = "ingress"
+  from_port                 = 22
+  to_port                   = 22
+  protocol                  = "tcp"
+  security_group_id         = aws_security_group.Website-deployment-WebServer.id
+  source_security_group_id = aws_security_group.Website_deployment_LB.id
 }
 
 resource "aws_security_group_rule" "Website-deployment-WebServer-outbound" {
