@@ -16,4 +16,8 @@ resource "aws_lb_target_group" "Lb_target_group" {
   depends_on = [
     aws_lb.LB_Web_App
   ]
+
+  lifecycle {
+      create_before_destroy = true
+    }
 }

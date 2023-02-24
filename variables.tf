@@ -19,7 +19,7 @@ variable "infrastructure_version" {
   default = "1"
 }
 
-variable "Subnet_count" {
+variable "Subnet_count" { #(up to 4 subnets)
   description = "Number of subnets in infrastructure"
   type        = number
   default     = 2
