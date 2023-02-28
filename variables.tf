@@ -31,12 +31,6 @@ variable "Instance_count_per_subnet" {
   default     = 1
 }
 
-variable "Web_instance_count" {
-  description = "Number of instances in infrastructure"
-  type        = number
-  default     = 2
-}
-
 variable "instance_type" {
   description = "EC2 Instance Type"
   type        = string
