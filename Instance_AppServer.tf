@@ -4,7 +4,7 @@ resource "aws_instance" "App_Server" {
   instance_type          = var.instance_type
   subnet_id              = element(local.subnets_private, count.index)
   vpc_security_group_ids = [aws_security_group.Website-deployment-AppServer.id]
-  key_name               = "mykey"
+  key_name               = "key-needed"
 
   user_data = templatefile("./userdata-AppServer.sh", {
     file_content = "App Server version 1.2 - ${count.index}"

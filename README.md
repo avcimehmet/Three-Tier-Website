@@ -1,6 +1,9 @@
 # Three-Tier-Website
 My website running on AWS in 3 Tier architecture with RDS storage (Created by Terraform).
 
+- Key_name should be updated @ <asg.tf line 6>, <Instance_AppServer.tf line 7>, <Instance_WebServer.tf line 7>
+- To see the architecture plan: "terraform graph -type=plan | dot -Tpng > graph.png"
+
 
 Problems to be Solved:
 1.  AppServers on private subnets may have a connection problem to the NAT_gw.

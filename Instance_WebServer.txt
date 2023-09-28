@@ -4,7 +4,7 @@ resource "aws_instance" "Web_Server" {
   instance_type          = var.instance_type
   subnet_id              = element(local.subnets_public, count.index)
   vpc_security_group_ids = [aws_security_group.Website-deployment-WebServer.id]
-  key_name = "mykey"
+  key_name = "key-needed"
 
   user_data = templatefile("./userdata-WebServer.sh", {
     file_content = "Web Server version 1.2 - ${count.index}"

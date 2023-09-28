@@ -3,7 +3,7 @@ resource "aws_launch_configuration" "lc_asg_web" {
   image_id        = data.aws_ami.amzlinux.id
   security_groups = ["${aws_security_group.Website-deployment-WebServer.id}"]
   instance_type   = "t2.micro"
-  key_name        = "mykey"
+  key_name        = "key-needed"
 
   user_data = file("./userdata-WebServer.sh")
 

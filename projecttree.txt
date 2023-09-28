@@ -1,0 +1,29 @@
+.
+├── Instance_AppServer.tf
+├── Instance_WebServer.txt
+├── Lb_target_group.tf
+├── README.md
+├── ami_datasource.tf
+├── asg.tf
+├── graph.png
+├── internet_gw.tf
+├── load_balancer.tf
+├── locals.tf
+├── nat_gw.tf
+├── projecttree.txt
+├── route_table_NATgw.tf
+├── route_table_main.tf
+├── route_table_private.tf
+├── security_group_AppServer.tf
+├── security_group_LB.tf
+├── security_group_RDS.tf
+├── security_group_WebServer.tf
+├── subnets.tf
+├── terraform.tfstate
+├── terraform.tfstate.backup
+├── userdata-AppServer.sh
+├── userdata-WebServer.sh
+├── variables.tf
+└── vpc.tf
+
+1 directory, 26 files
