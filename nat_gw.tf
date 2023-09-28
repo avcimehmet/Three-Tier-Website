@@ -12,7 +12,7 @@ resource "aws_nat_gateway" "NATgw" {
 }
 
 resource "aws_eip" "elasticIP" {
-  vpc = true
+  domain = "vpc"
   tags = {
     Name = "NAT gw EIP"
   }
